@@ -26,4 +26,55 @@ const init = () =>
             }
         });
 
+const addEmployee = () =>
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: 'What is their first name?'
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: 'What is their last name?'
+        },
+        {
+            type: 'input',
+            name: 'title',
+            message: 'What is their title?'
+        },
+        {
+            type: 'input',
+            name: 'department',
+            message: 'What department do they work in?'
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'What is their salary?'
+        },
+        {
+            type: 'input',
+            name: 'manager',
+            message: 'Who is their manager?'
+        },
+    ])
+        .then((answer) => {
+            //Add new employee to employeeDB.sql
+        });
+
+const viewDepartment = () =>
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Which department would you like to view?',
+            choices: ['Management', 'Sales', 'Accounting', 'Administration', 'Quality Assurance', 'Customer Service', 'Human Resources']
+        }
+    ])
+        .then((answer) => {
+            //different afterConnection function that filters table by department
+        });
+
+
 init();
