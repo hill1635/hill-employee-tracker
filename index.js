@@ -1,6 +1,5 @@
 var inquirer = require('inquirer');
-const SQL = require('SQL');
-// var db = require('./employeeDB.sql');
+const queries = require('queries');
 
 const init = () =>
     inquirer.prompt([
