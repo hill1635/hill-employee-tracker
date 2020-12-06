@@ -1,5 +1,22 @@
-var inquirer = require('inquirer');
-const queries = require('queries');
+const inquirer = require('inquirer');
+const mysql = require('mysql');
+const consoleTable = require('console.table');
+// How to connect queries?
+// const queries = ('./queries');
+
+var connection = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: '',
+    database: 'employeeDB'
+});
+
+connection.connect(function (err) {
+    if (err) throw err;
+    console.log('connected as id ' + connection.threadID);
+    init();
+});
 
 const init = () =>
     inquirer.prompt([
@@ -11,18 +28,26 @@ const init = () =>
         },
     ])
         .then((answer) => {
-            if (answer.init === 'View All Employees') {
-                //Function that displays employeeDB in node?
-                //afterConnection();?
-            } else if (answer.init === 'View All Employees by Department') {
-                viewDepartment();
-            } else if (answer.init === 'View All Employees by Manager') {
-                //Filter by manager function
-            } else if (answer.init === 'Add Employee') {
-                addEmployee();
-            } else if (answer.init === 'Remove Employee') {
-                //Delete by id# function.
+            // Or switch statement?
+            switch (answer.action) {
+                case 'View All Employees':
+                    //Function that displays employeeDB in node?
+                    //afterConnection();?
+                    break;
+                case 'View All Employees by Department':
+                    viewDepartment();
+                    break;
+                case 'View All Employees by Manager':
+                    //Filter by manager function
+                    break;
+                case 'Add Employee':
+                    addEmployee();
+                    break;
+                case 'Remove Employee':
+                    //Delete by id# function.
+                    break;
             }
+        }
         });
 
 const addEmployee = () =>
@@ -74,6 +99,3 @@ const viewDepartment = () =>
         .then((answer) => {
             //different afterConnection function that filters table by department
         });
-
-
-init();
