@@ -23,9 +23,18 @@ function displayByManager() {
 
 function newEmployee() {
     var query = 'INSERT INTO people (first_name, last_name, title, department, salary, manager) ';
-    query += 'VALUES ( { first_name: answer.firstName } , { last_name: answer.lastName } , { title = answer.title } , ';
-    query += '{ department: answer.department } , { salary: answer.salary } , { manager: answer.manager } ;';
-    query += 'SELECT * FROM people';
+    query += 'VALUES (' + answer.firstName + ' , ' + answer.lastName + ' , ' + answer.title + ' , ';
+    query += answer.department + ' , ' + answer.salary + ' , ' + answer.manager + ';';
+    query += 'SELECT * FROM people;';
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.log(res);
+    });
+}
+
+function removeEmployee() {
+    var query = 'DELETE FROM people WHERE last_name = ' + answer.lastName + ' AND first_name = ' + answer.firstName + ' ';
+    query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {
         if (err) throw err;
         console.log(res);
