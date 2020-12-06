@@ -85,7 +85,7 @@ const addEmployee = () =>
         },
     ])
         .then((answer) => {
-            //Add new employee to employeeDB.sql
+            newEmployee();
         });
 
 const viewDepartment = () =>
@@ -98,5 +98,17 @@ const viewDepartment = () =>
         }
     ])
         .then((answer) => {
-            displayDepartment();
+            displayByDepartment();
+        });
+
+const viewManager = () =>
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'manager',
+            message: 'Who is their manager?'
+        },
+    ])
+        .then((answer) => {
+
         });

@@ -6,7 +6,7 @@ function displayAll() {
     });
 }
 
-function displayDepartment() {
+function displayByDepartment() {
     connection.query('SELECT * FROM people WHERE ?', { department: answer.department }, function (err, res) {
         if (err) throw err;
         console.log(res);
@@ -22,8 +22,7 @@ function newEmployee() {
     connection.query(query, function (err, res) {
         if (err) throw err;
         console.log(res);
-    }
-
+    });
 }
 
 module.exports = queries;
