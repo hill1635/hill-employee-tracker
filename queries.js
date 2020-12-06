@@ -32,7 +32,7 @@ function newEmployee() {
     });
 }
 
-function removeEmployee() {
+function deleteEmployee() {
     var query = 'DELETE FROM people WHERE last_name = ' + answer.lastName + ' AND first_name = ' + answer.firstName + ' ';
     query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {

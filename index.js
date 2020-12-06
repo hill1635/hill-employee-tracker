@@ -39,7 +39,7 @@ const init = () =>
                     break;
 
                 case 'View All Employees by Manager':
-                    //Filter by manager function
+                    displayByManager();
                     break;
 
                 case 'Add Employee':
@@ -47,9 +47,34 @@ const init = () =>
                     break;
 
                 case 'Remove Employee':
-                    //Delete by id# function.
+                    removeEmployee();
                     break;
             }
+        });
+
+const viewDepartment = () =>
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'department',
+            message: 'Which department would you like to view?',
+            choices: ['Management', 'Sales', 'Accounting', 'Administration', 'Quality Assurance', 'Customer Service', 'Human Resources']
+        }
+    ])
+        .then((answer) => {
+            displayByDepartment();
+        });
+
+const viewManager = () =>
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'manager',
+            message: 'Who is their manager?'
+        },
+    ])
+        .then((answer) => {
+            displayByManager();
         });
 
 const addEmployee = () =>
@@ -89,27 +114,15 @@ const addEmployee = () =>
             newEmployee();
         });
 
-const viewDepartment = () =>
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'department',
-            message: 'Which department would you like to view?',
-            choices: ['Management', 'Sales', 'Accounting', 'Administration', 'Quality Assurance', 'Customer Service', 'Human Resources']
-        }
-    ])
-        .then((answer) => {
-            displayByDepartment();
-        });
 
-const viewManager = () =>
+const removeEmployee = () =>
     inquirer.prompt([
         {
-            type: 'input',
-            name: 'manager',
-            message: 'Who is their manager?'
+            type: 'number',
+            name: 'id',
+            message: 'What is their ID number?'
         },
     ])
-        .then((answer) => {
-            displayByManager();
+        .then((answer) = > {
+            deleteEmployee();
         });
