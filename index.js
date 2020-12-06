@@ -28,26 +28,27 @@ const init = () =>
         },
     ])
         .then((answer) => {
-            // Or switch statement?
             switch (answer.action) {
                 case 'View All Employees':
-                    //Function that displays employeeDB in node?
-                    //afterConnection();?
+                    displayAll();
                     break;
+
                 case 'View All Employees by Department':
                     viewDepartment();
                     break;
+
                 case 'View All Employees by Manager':
                     //Filter by manager function
                     break;
+
                 case 'Add Employee':
                     addEmployee();
                     break;
+
                 case 'Remove Employee':
                     //Delete by id# function.
                     break;
             }
-        }
         });
 
 const addEmployee = () =>
@@ -97,5 +98,5 @@ const viewDepartment = () =>
         }
     ])
         .then((answer) => {
-            //different afterConnection function that filters table by department
+            displayDepartment();
         });
