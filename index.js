@@ -18,6 +18,7 @@ connection.connect(function (err) {
     init();
 });
 
+// Inquirer class? Extended by Queries subclass?
 const init = () =>
     inquirer.prompt([
         {
@@ -110,5 +111,5 @@ const viewManager = () =>
         },
     ])
         .then((answer) => {
-
+            displayByManager();
         });
