@@ -1,15 +1,14 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
+const query = require('./queries');
 const consoleTable = require('console.table');
-// How to connect queries?
-// const queries = ('./queries');
 
 var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: '',
-    database: 'employeeDB'
+    password: 'pass',
+    database: 'employee_db'
 });
 
 connection.connect(function (err) {
@@ -18,7 +17,6 @@ connection.connect(function (err) {
     init();
 });
 
-// Inquirer class? Extended by Queries subclass?
 const init = () =>
     inquirer.prompt([
         {
@@ -29,9 +27,10 @@ const init = () =>
         },
     ])
         .then((answer) => {
+            // Issue with the switch case?
             switch (answer.action) {
                 case 'View All Employees':
-                    displayAll();
+                    query.displayAll();
                     break;
 
                 case 'View All Employees by Department':
@@ -39,7 +38,7 @@ const init = () =>
                     break;
 
                 case 'View All Employees by Manager':
-                    displayByManager();
+                    viewManager();
                     break;
 
                 case 'Add Employee':
@@ -62,7 +61,7 @@ const viewDepartment = () =>
         }
     ])
         .then((answer) => {
-            displayByDepartment();
+            query.displayByDepartment();
         });
 
 const viewManager = () =>
@@ -74,7 +73,7 @@ const viewManager = () =>
         },
     ])
         .then((answer) => {
-            displayByManager();
+            query.displayByManager();
         });
 
 const addEmployee = () =>
@@ -105,24 +104,29 @@ const addEmployee = () =>
             message: 'What is their salary?'
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'manager',
-            message: 'Who is their manager?'
+            message: 'Who is their manager?',
+            choices: ['Jo Bennett', 'David Wallace', 'Michael Scott']
         },
     ])
         .then((answer) => {
-            newEmployee();
+            // Updates query with answers
+            const newQuery = new query(answer.firstName, answer.lastName, answer.title, answer.department, answer.salary, answer.manager);
+            newQuery.newEmployee();
         });
-
 
 const removeEmployee = () =>
     inquirer.prompt([
         {
-            type: 'number',
-            name: 'id',
-            message: 'What is their ID number?'
+            // Needs to be list of employees
+            type: 'list',
+            name: 'remove',
+            message: 'Who would you like to remove?',
+            // How to display list of employees?
+            choices: []
         },
     ])
-        .then((answer) = > {
-            deleteEmployee();
+        .then((answer) => {
+            query.deleteEmployee();
         });
