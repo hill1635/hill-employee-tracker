@@ -40,6 +40,12 @@ const init = () =>
             } else if (answer.init === 'Remove Employee') {
                 // Fix function name to make more sense
                 listEmployees();
+            } else if (answer.init === 'Update Employee Roles') {
+                updateRole();
+            } else if (answer.init === 'Update Employee Manager') {
+                updateManager();
+            } else if (answer.init === 'View All Roles') {
+                viewRoles();
             } else if (answer.init === 'Quit') {
                 connection.end();
             }
@@ -195,3 +201,27 @@ const deleteEmployee = (answer) => {
     });
 }
 
+const updateRole = () => {
+
+}
+
+const updateManager = () => {
+
+}
+
+const viewRoles = () => {
+    connection.query('SELECT title FROM people', function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        init();
+    });
+}
+
+
+// const displayByManager = (answer) => {
+//     connection.query('SELECT * FROM people WHERE ?', { manager: answer }, function (err, res) {
+//         if (err) throw err;
+//         console.table(res);
+//         init();
+//     });
+// }
