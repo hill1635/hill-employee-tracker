@@ -27,7 +27,7 @@ const init = () =>
         },
     ])
         .then((answer) => {
-            // Issue with the switch case? Functions not defined.
+            // Issue with the switch case?
 
             // switch (answer.action) {
             //     case 'View All Employees':
@@ -60,16 +60,20 @@ const init = () =>
             } else if (answer.init === 'Add Employee') {
                 addEmployee();
             } else if (answer.init === 'Remove Employee') {
-                removeEmployee();
+                // Fix function name to make more sense
+                listEmployees();
             } else if (answer.init === 'Quit') {
                 connection.end();
             }
         });
 
 const displayAll = () =>
-    // Views employees as objects, need to convert to table format somehow?
     connection.query('SELECT * FROM people', function (err, res) {
         if (err) throw err;
+
+        // Formatting for displaying specific employees by a specific property
+        // console.log(res[1].id);
+
         console.table(res);
         init();
     });
@@ -85,7 +89,6 @@ const viewDepartment = () =>
         }
     ])
         .then((answer) => {
-            // Displays employees as objects
             displayByDepartment(answer.department);
         });
 
@@ -163,7 +166,6 @@ const newEmployee = (firstName, lastName, title, department, salary, manager) =>
     var query = 'INSERT INTO people (first_name, last_name, title, department, salary, manager) ';
     query += 'VALUES (\'' + firstName + '\', \'' + lastName + '\', \'' + title + '\', \'';
     query += department + '\', \'' + salary + '\', \'' + manager + '\');';
-    // query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {
         if (err) throw err;
         displayAll();
@@ -172,28 +174,47 @@ const newEmployee = (firstName, lastName, title, department, salary, manager) =>
 }
 
 
-const removeEmployee = () =>
+const removeEmployee = (employees) =>
     inquirer.prompt([
         {
             // Needs to be list of employees
             type: 'list',
             name: 'remove',
             message: 'Who would you like to remove?',
-            // How to display list of employees?
-            choices: []
+            choices: employees
         },
     ])
         .then((answer) => {
             deleteEmployee();
         });
 
+// Fix function name to make more sense
+const listEmployees = () => {
+    var employees = [];
+    connection.query('SELECT * FROM people', function (err, res) {
+        if (err) throw err;
+
+        for (i = 0; i < res.length; i++) {
+            var employee = res[i].first_name + ' ' + res[i].last_name;
+            // var employeeString = JSON.stringify(employee);
+            employees.push(employee);
+        }
+        removeEmployee(employees);
+        // console.log('test 1: ', employees);
+    });
+}
+
 const deleteEmployee = () => {
-    // Need to modify criteria, remove option is list of employees
+    // For loop
+    // Parses name selection into first_name and last_name
+    // Moves to separate arrays?
+    // If statement - first & last names match up
+
     var query = 'DELETE FROM people WHERE last_name = ' + answer.lastName + ' AND first_name = ' + answer.firstName + ' ';
-    query += 'SELECT * FROM people;';
+    // query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {
         if (err) throw err;
-        console.table(res);
+        displayAll();
         connection.end();
     });
 }
