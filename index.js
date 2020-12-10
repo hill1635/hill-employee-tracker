@@ -23,7 +23,7 @@ const init = () =>
             type: 'list',
             name: 'init',
             message: 'What would you like to do?',
-            choices: ['View All Employees', 'View All Employees by Department', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles'],
+            choices: ['View All Employees', 'View All Employees by Department', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles', 'Quit'],
         },
     ])
         .then((answer) => {
@@ -61,6 +61,8 @@ const init = () =>
                 addEmployee();
             } else if (answer.init === 'Remove Employee') {
                 removeEmployee();
+            } else if (answer.init === 'Quit') {
+                connection.end();
             }
         });
 
@@ -69,7 +71,7 @@ const displayAll = () =>
     connection.query('SELECT * FROM people', function (err, res) {
         if (err) throw err;
         console.table(res);
-        connection.end();
+        init();
     });
 
 
@@ -153,19 +155,18 @@ const addEmployee = () =>
         },
     ])
         .then((answer) => {
-            // Updates query with answers
-            newEmployee();
+            newEmployee(answer.firstName, answer.lastName, answer.title, answer.department, answer.salary, answer.manager);
         });
 
 // Set as class?
-const newEmployee = () => {
+const newEmployee = (firstName, lastName, title, department, salary, manager) => {
     var query = 'INSERT INTO people (first_name, last_name, title, department, salary, manager) ';
-    query += 'VALUES (' + answer.firstName + ' , ' + answer.lastName + ' , ' + answer.title + ' , ';
-    query += answer.department + ' , ' + answer.salary + ' , ' + answer.manager + ';';
-    query += 'SELECT * FROM people;';
+    query += 'VALUES (\'' + firstName + '\', \'' + lastName + '\', \'' + title + '\', \'';
+    query += department + '\', \'' + salary + '\', \'' + manager + '\');';
+    // query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {
         if (err) throw err;
-        console.table(res);
+        displayAll();
         connection.end();
     });
 }
