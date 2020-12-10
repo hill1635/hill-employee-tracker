@@ -27,29 +27,7 @@ const init = () =>
         },
     ])
         .then((answer) => {
-            // Issue with the switch case?
-
-            // switch (answer.action) {
-            //     case 'View All Employees':
-            //         displayAll();
-            //         break;
-
-            //     case 'View All Employees by Department':
-            //         viewDepartment();
-            //         break;
-
-            //     case 'View All Employees by Manager':
-            //         viewManager();
-            //         break;
-
-            //     case 'Add Employee':
-            //         addEmployee();
-            //         break;
-
-            //     case 'Remove Employee':
-            //         removeEmployee();
-            //         break;
-            // }
+            // Try switch case?
 
             if (answer.init === 'View All Employees') {
                 displayAll();
@@ -96,7 +74,7 @@ const displayByDepartment = (answer) => {
     connection.query('SELECT * FROM people WHERE ?', { department: answer }, function (err, res) {
         if (err) throw err;
         console.table(res);
-        connection.end();
+        init();
     });
 }
 
@@ -117,7 +95,7 @@ const displayByManager = (answer) => {
     connection.query('SELECT * FROM people WHERE ?', { manager: answer }, function (err, res) {
         if (err) throw err;
         console.table(res);
-        connection.end();
+        init();
     });
 }
 
@@ -169,7 +147,7 @@ const newEmployee = (firstName, lastName, title, department, salary, manager) =>
     connection.query(query, function (err, res) {
         if (err) throw err;
         displayAll();
-        connection.end();
+        init();
     });
 }
 
@@ -177,7 +155,6 @@ const newEmployee = (firstName, lastName, title, department, salary, manager) =>
 const removeEmployee = (employees) =>
     inquirer.prompt([
         {
-            // Needs to be list of employees
             type: 'list',
             name: 'remove',
             message: 'Who would you like to remove?',
@@ -185,7 +162,7 @@ const removeEmployee = (employees) =>
         },
     ])
         .then((answer) => {
-            deleteEmployee();
+            deleteEmployee(answer.remove);
         });
 
 // Fix function name to make more sense
@@ -196,25 +173,25 @@ const listEmployees = () => {
 
         for (i = 0; i < res.length; i++) {
             var employee = res[i].first_name + ' ' + res[i].last_name;
-            // var employeeString = JSON.stringify(employee);
             employees.push(employee);
         }
         removeEmployee(employees);
-        // console.log('test 1: ', employees);
     });
 }
 
-const deleteEmployee = () => {
-    // For loop
-    // Parses name selection into first_name and last_name
-    // Moves to separate arrays?
-    // If statement - first & last names match up
+const deleteEmployee = (answer) => {
+    var name = answer;
+    var firstLast = name.split(' ');
+    console.log(firstLast);
 
-    var query = 'DELETE FROM people WHERE last_name = ' + answer.lastName + ' AND first_name = ' + answer.firstName + ' ';
+    // Need to incorporate ID or array index somehow, deletes all employees by that name.
+    var query = 'DELETE FROM people WHERE first_name = \'' + firstLast[0] + '\' AND last_name = \'' + firstLast[1] + '\';';
     // query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {
         if (err) throw err;
         displayAll();
-        connection.end();
+        init();
+        // connection.end();
     });
 }
+
