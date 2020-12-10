@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
-const query = require('./queries');
+const Query = require('./queries');
 const consoleTable = require('console.table');
 
 var connection = mysql.createConnection({
@@ -13,9 +13,11 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log('connected as id ' + connection.threadID);
+    // console.log('connected as id ' + connection.threadID);
     init();
 });
+
+// class Index extends Query {
 
 const init = () =>
     inquirer.prompt([
@@ -27,29 +29,52 @@ const init = () =>
         },
     ])
         .then((answer) => {
-            // Issue with the switch case?
-            switch (answer.action) {
-                case 'View All Employees':
-                    query.displayAll();
-                    break;
+            // Issue with the switch case? Functions not defined.
 
-                case 'View All Employees by Department':
-                    viewDepartment();
-                    break;
+            // switch (answer.action) {
+            //     case 'View All Employees':
+            //         displayAll();
+            //         break;
 
-                case 'View All Employees by Manager':
-                    viewManager();
-                    break;
+            //     case 'View All Employees by Department':
+            //         viewDepartment();
+            //         break;
 
-                case 'Add Employee':
-                    addEmployee();
-                    break;
+            //     case 'View All Employees by Manager':
+            //         viewManager();
+            //         break;
 
-                case 'Remove Employee':
-                    removeEmployee();
-                    break;
+            //     case 'Add Employee':
+            //         addEmployee();
+            //         break;
+
+            //     case 'Remove Employee':
+            //         removeEmployee();
+            //         break;
+            // }
+
+            // const newQuery = new Query (firstName, lastName, title, department, salary, manager);
+
+            if (answer.init === 'View All Employees') {
+                displayAll();
+            } else if (answer.init === 'View All Employees by Department') {
+                viewDepartment();
+            } else if (answer.init === 'View All Employees by Manager') {
+                viewManager();
+            } else if (answer.init === 'Add Employee') {
+                addEmployee();
+            } else if (answer.init === 'Remove Employee') {
+                removeEmployee();
             }
         });
+
+const displayAll = () =>
+    // Views employees as objects, need to convert to table format somehow?
+    connection.query('SELECT * FROM people', function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    });
 
 const viewDepartment = () =>
     inquirer.prompt([
@@ -61,7 +86,8 @@ const viewDepartment = () =>
         }
     ])
         .then((answer) => {
-            query.displayByDepartment();
+// Displays employees as objects
+            displayByDepartment(answer.department);
         });
 
 const viewManager = () =>
@@ -73,7 +99,7 @@ const viewManager = () =>
         },
     ])
         .then((answer) => {
-            query.displayByManager();
+            displayByManager(answer.manager);
         });
 
 const addEmployee = () =>
@@ -94,9 +120,10 @@ const addEmployee = () =>
             message: 'What is their title?'
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'department',
-            message: 'What department do they work in?'
+            message: 'What department do they work in?',
+            choices: ['Management', 'Sales', 'Accounting', 'Administration', 'Quality Assurance', 'Customer Service', 'Human Resources']
         },
         {
             type: 'input',
@@ -112,8 +139,7 @@ const addEmployee = () =>
     ])
         .then((answer) => {
             // Updates query with answers
-            const newQuery = new query(answer.firstName, answer.lastName, answer.title, answer.department, answer.salary, answer.manager);
-            newQuery.newEmployee();
+            newEmployee();
         });
 
 const removeEmployee = () =>
@@ -128,5 +154,50 @@ const removeEmployee = () =>
         },
     ])
         .then((answer) => {
-            query.deleteEmployee();
+            deleteEmployee();
         });
+
+const displayByDepartment = (answer) => {
+    connection.query('SELECT * FROM people WHERE ?', { department: answer }, function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    });
+}
+
+const displayByManager = (answer) => {
+    connection.query('SELECT * FROM people WHERE ?', { manager: answer }, function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    });
+}
+
+// Set as class?
+const newEmployee = () => {
+    var query = 'INSERT INTO people (first_name, last_name, title, department, salary, manager) ';
+    query += 'VALUES (' + answer.firstName + ' , ' + answer.lastName + ' , ' + answer.title + ' , ';
+    query += answer.department + ' , ' + answer.salary + ' , ' + answer.manager + ';';
+    query += 'SELECT * FROM people;';
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    });
+}
+
+const deleteEmployee = () => {
+    // Need to modify criteria, remove option is list of employees
+    var query = 'DELETE FROM people WHERE last_name = ' + answer.lastName + ' AND first_name = ' + answer.firstName + ' ';
+    query += 'SELECT * FROM people;';
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        connection.end();
+    });
+}
+// }
+
+// Index.init();
+// const newIndex = new Index;
+// init();

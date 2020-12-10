@@ -1,26 +1,18 @@
-class query {
-    constructor(firstName, lastName, title, department, salary, manager) {
-        this.firstName = firstname;
-        this.lastName = lastName;
-        this.title = title;
-        this.department = department;
-        this.salary = salary;
-        this.manager = manager;
-    }
-
-    displayAll() {
-        connection.query('SELECT * FROM people', function (err, res) {
-            if (err) throw err;
-            console.log(res);
-            // connection.end();
-        });
-    }
+class Query {
+    // constructor(firstName, lastName, title, department, salary, manager) {
+    //     this.firstName = firstName;
+    //     this.lastName = lastName;
+    //     this.title = title;
+    //     this.department = department;
+    //     this.salary = salary;
+    //     this.manager = manager;
+    // }
 
     displayByDepartment() {
         connection.query('SELECT * FROM people WHERE ?', { department: answer.department }, function (err, res) {
             if (err) throw err;
             console.log(res);
-            // connection.end();
+            connection.end();
         });
     }
 
@@ -28,6 +20,7 @@ class query {
         connection.query('SELECT * FROM people WHERE ?', { manager: answer.manager }, function (err, res) {
             if (err) throw err;
             console.log(res);
+            connection.end();
         });
     }
 
@@ -40,6 +33,7 @@ class query {
         connection.query(query, function (err, res) {
             if (err) throw err;
             console.log(res);
+            connection.end();
         });
     }
 
@@ -50,9 +44,13 @@ class query {
         connection.query(query, function (err, res) {
             if (err) throw err;
             console.log(res);
+            connection.end();
         });
     }
 }
 
-module.exports = query;
+// const newQuery = new Query (firstName, lastName, title, department, salary, manager);
+// newQuery.displayAll();
+
+module.exports = Query;
 // export {displayAll, displayByDepartment, displayByManager, newEmployee, deleteEmployee};
