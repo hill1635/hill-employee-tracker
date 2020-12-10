@@ -17,8 +17,6 @@ connection.connect(function (err) {
     init();
 });
 
-// class Index extends Query {
-
 const init = () =>
     inquirer.prompt([
         {
@@ -53,8 +51,6 @@ const init = () =>
             //         break;
             // }
 
-            // const newQuery = new Query (firstName, lastName, title, department, salary, manager);
-
             if (answer.init === 'View All Employees') {
                 displayAll();
             } else if (answer.init === 'View All Employees by Department') {
@@ -72,9 +68,10 @@ const displayAll = () =>
     // Views employees as objects, need to convert to table format somehow?
     connection.query('SELECT * FROM people', function (err, res) {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
         connection.end();
     });
+
 
 const viewDepartment = () =>
     inquirer.prompt([
@@ -86,9 +83,18 @@ const viewDepartment = () =>
         }
     ])
         .then((answer) => {
-// Displays employees as objects
+            // Displays employees as objects
             displayByDepartment(answer.department);
         });
+
+const displayByDepartment = (answer) => {
+    connection.query('SELECT * FROM people WHERE ?', { department: answer }, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        connection.end();
+    });
+}
+
 
 const viewManager = () =>
     inquirer.prompt([
@@ -101,6 +107,15 @@ const viewManager = () =>
         .then((answer) => {
             displayByManager(answer.manager);
         });
+
+const displayByManager = (answer) => {
+    connection.query('SELECT * FROM people WHERE ?', { manager: answer }, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        connection.end();
+    });
+}
+
 
 const addEmployee = () =>
     inquirer.prompt([
@@ -142,6 +157,20 @@ const addEmployee = () =>
             newEmployee();
         });
 
+// Set as class?
+const newEmployee = () => {
+    var query = 'INSERT INTO people (first_name, last_name, title, department, salary, manager) ';
+    query += 'VALUES (' + answer.firstName + ' , ' + answer.lastName + ' , ' + answer.title + ' , ';
+    query += answer.department + ' , ' + answer.salary + ' , ' + answer.manager + ';';
+    query += 'SELECT * FROM people;';
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        connection.end();
+    });
+}
+
+
 const removeEmployee = () =>
     inquirer.prompt([
         {
@@ -157,47 +186,13 @@ const removeEmployee = () =>
             deleteEmployee();
         });
 
-const displayByDepartment = (answer) => {
-    connection.query('SELECT * FROM people WHERE ?', { department: answer }, function (err, res) {
-        if (err) throw err;
-        console.log(res);
-        connection.end();
-    });
-}
-
-const displayByManager = (answer) => {
-    connection.query('SELECT * FROM people WHERE ?', { manager: answer }, function (err, res) {
-        if (err) throw err;
-        console.log(res);
-        connection.end();
-    });
-}
-
-// Set as class?
-const newEmployee = () => {
-    var query = 'INSERT INTO people (first_name, last_name, title, department, salary, manager) ';
-    query += 'VALUES (' + answer.firstName + ' , ' + answer.lastName + ' , ' + answer.title + ' , ';
-    query += answer.department + ' , ' + answer.salary + ' , ' + answer.manager + ';';
-    query += 'SELECT * FROM people;';
-    connection.query(query, function (err, res) {
-        if (err) throw err;
-        console.log(res);
-        connection.end();
-    });
-}
-
 const deleteEmployee = () => {
     // Need to modify criteria, remove option is list of employees
     var query = 'DELETE FROM people WHERE last_name = ' + answer.lastName + ' AND first_name = ' + answer.firstName + ' ';
     query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {
         if (err) throw err;
-        console.log(res);
+        console.table(res);
         connection.end();
     });
 }
-// }
-
-// Index.init();
-// const newIndex = new Index;
-// init();
