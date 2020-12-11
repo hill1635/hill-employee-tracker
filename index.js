@@ -39,11 +39,11 @@ const init = () =>
                 addEmployee();
             } else if (answer.init === 'Remove Employee') {
                 // Fix function name to make more sense
-                listEmployees();
-            } else if (answer.init === 'Update Employee Roles') {
-                updateRole();
+                listEmployees(answer.init);
+            } else if (answer.init === 'Update Employee Role') {
+                listEmployees(answer.init);
             } else if (answer.init === 'Update Employee Manager') {
-                updateManager();
+                listEmployees(answer.init);
             } else if (answer.init === 'View All Roles') {
                 viewRoles();
             } else if (answer.init === 'Quit') {
@@ -157,8 +157,8 @@ const newEmployee = (firstName, lastName, title, department, salary, manager) =>
     });
 }
 
-
 const removeEmployee = (employees) =>
+
     inquirer.prompt([
         {
             type: 'list',
@@ -168,46 +168,76 @@ const removeEmployee = (employees) =>
         },
     ])
         .then((answer) => {
-            deleteEmployee(answer.remove);
+            // Removes from DB
+            // deleteEmployee(answer.remove);
+            connection.end();
         });
 
 // Fix function name to make more sense
-const listEmployees = () => {
+const listEmployees = (answer) => {
     var employees = [];
+
     connection.query('SELECT * FROM people', function (err, res) {
         if (err) throw err;
 
+        // Generates employee list
         for (i = 0; i < res.length; i++) {
             var employee = res[i].first_name + ' ' + res[i].last_name;
             employees.push(employee);
         }
-        removeEmployee(employees);
+        // Runs inquirer with employees array
+        if (answer === 'Remove Employee') {
+            removeEmployee(employees);
+        } else if (answer === 'Update Employee Role') {
+            updateRole(employees);
+        } else if (answer === 'Update Employee Manager') {
+            updateManager(employees);
+        }
     });
 }
 
 const deleteEmployee = (answer) => {
+
     var name = answer;
     var firstLast = name.split(' ');
     console.log(firstLast);
 
     // Need to incorporate ID or array index somehow, deletes all employees by that name.
     var query = 'DELETE FROM people WHERE first_name = \'' + firstLast[0] + '\' AND last_name = \'' + firstLast[1] + '\';';
-    // query += 'SELECT * FROM people;';
     connection.query(query, function (err, res) {
         if (err) throw err;
         displayAll();
         init();
-        // connection.end();
     });
 }
 
-const updateRole = () => {
+const updateRole = (employees) =>
+    inquirer.prompt([
+        {
+            name: 'role',
+            type: 'list',
+            message: 'Which employee would you like to update?',
+            choices: employees
+        }
+    ])
+        .then((answer) => {
+            // Query function here
+            connection.end();
+        });
 
-}
-
-const updateManager = () => {
-
-}
+const updateManager = (employees) =>
+    inquirer.prompt([
+        {
+            name: 'manager',
+            type: 'list',
+            message: 'Which employee would you like to update?',
+            choices: employees
+        }
+    ])
+        .then((answer) => {
+            // Query function here.
+            connection.end();
+        });
 
 const viewRoles = () => {
     connection.query('SELECT title FROM people', function (err, res) {
@@ -216,12 +246,3 @@ const viewRoles = () => {
         init();
     });
 }
-
-
-// const displayByManager = (answer) => {
-//     connection.query('SELECT * FROM people WHERE ?', { manager: answer }, function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//         init();
-//     });
-// }
