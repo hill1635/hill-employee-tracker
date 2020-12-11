@@ -88,8 +88,8 @@ const displayByDepartment = (answer) => {
 const viewManager = () =>
     inquirer.prompt([
         {
-            type: 'input',
             name: 'manager',
+            type: 'input',
             message: 'Who is their manager?'
         },
     ])
@@ -252,16 +252,42 @@ const newRole = (employee, role) => {
 const updateManager = (employees) =>
     inquirer.prompt([
         {
-            name: 'manager',
+            name: 'employee',
             type: 'list',
             message: 'Which employee would you like to update?',
             choices: employees
+        },
+        {
+            name: 'manager',
+            type: 'input',
+            message: 'Who is their new manager?'
         }
     ])
         .then((answer) => {
-            // Query function here.
-            // connection.end();
+            newManager(answer.employee, answer.manager);
         });
+
+const newManager = (employee, manager) => {
+    var name = employee.split(' ');
+    connection.query(
+        'UPDATE people SET ? WHERE ?',
+        [
+            {
+                manager: manager
+            },
+            {
+                first_name: name[0]
+            },
+            {
+                last_name: name[1]
+            },
+        ],
+        function (err, res) {
+            if (err) throw err;
+            displayAll();
+            init();
+        });
+}
 
 const viewRoles = () => {
     connection.query('SELECT title FROM people', function (err, res) {
