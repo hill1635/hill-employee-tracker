@@ -169,8 +169,8 @@ const removeEmployee = (employees) =>
     ])
         .then((answer) => {
             // Removes from DB
-            // deleteEmployee(answer.remove);
-            connection.end();
+            deleteEmployee(answer.remove);
+            // connection.end();
         });
 
 // Fix function name to make more sense
@@ -197,13 +197,10 @@ const listEmployees = (answer) => {
 }
 
 const deleteEmployee = (answer) => {
-
-    var name = answer;
-    var firstLast = name.split(' ');
-    console.log(firstLast);
+    var name = answer.split(' ');
 
     // Need to incorporate ID or array index somehow, deletes all employees by that name.
-    var query = 'DELETE FROM people WHERE first_name = \'' + firstLast[0] + '\' AND last_name = \'' + firstLast[1] + '\';';
+    var query = 'DELETE FROM people WHERE first_name = \'' + name[0] + '\' AND last_name = \'' + name[1] + '\';';
     connection.query(query, function (err, res) {
         if (err) throw err;
         displayAll();
@@ -214,16 +211,43 @@ const deleteEmployee = (answer) => {
 const updateRole = (employees) =>
     inquirer.prompt([
         {
-            name: 'role',
+            name: 'employee',
             type: 'list',
             message: 'Which employee would you like to update?',
             choices: employees
+        },
+        {
+            name: 'role',
+            type: 'input',
+            message: 'What is their new role?'
         }
     ])
         .then((answer) => {
-            // Query function here
-            connection.end();
+            // Turn employee into object, re-assign id numbers?
+            newRole(answer.employee, answer.role);
         });
+
+const newRole = (employee, role) => {
+    var name = employee.split(' ');
+    connection.query(
+        'UPDATE people SET ? WHERE ? AND ?',
+        [
+            {
+                title: role
+            },
+            {
+                first_name: name[0]
+            },
+            {
+                last_name: name[1]
+            }
+        ],
+        function (err, res) {
+            if (err) throw err;
+            displayAll();
+            init();
+        });
+}
 
 const updateManager = (employees) =>
     inquirer.prompt([
@@ -236,7 +260,7 @@ const updateManager = (employees) =>
     ])
         .then((answer) => {
             // Query function here.
-            connection.end();
+            // connection.end();
         });
 
 const viewRoles = () => {
